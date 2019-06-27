@@ -1,12 +1,13 @@
 #include <gtk/gtk.h>
-#include "calculator_view.c"
+#include "calculator_view.h"
 
 int main(int argc, char *argv[])
 {
-  GtkWidget *window;
+  CalculatorView *view;
+
   gtk_init(&argc, &argv);
-  window = calculator_view_new();
-  gtk_widget_show(window);
+  view = calculator_view_new();
+  calculator_view_show(view);
   gtk_main();
 
   return 0;

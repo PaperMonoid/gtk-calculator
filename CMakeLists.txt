@@ -9,5 +9,5 @@ add_definitions(${GTK3_CFLAGS_OTHER})
 
 file(COPY views DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(gtk-calculator src/main.c)
+add_executable(gtk-calculator src/main.c src/calculator_view.c)
 target_link_libraries(gtk-calculator ${GTK3_LIBRARIES})
