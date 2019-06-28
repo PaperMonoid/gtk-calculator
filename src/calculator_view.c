@@ -1,99 +1,133 @@
 #include <gtk/gtk.h>
 #include "calculator_view.h"
+#include "calculator_presenter.h"
+
+struct CalculatorView {
+  CalculatorPresenter *presenter;
+  GtkWidget *win_calculator;
+  GtkWidget *txt_result;
+};
 
 void btn_0_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("0\n");
+  CalculatorView *view = data;
+  calculator_presenter_add_digit(view->presenter, '0');
 }
 
 void btn_1_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("1\n");
+  CalculatorView *view = data;
+  calculator_presenter_add_digit(view->presenter, '1');
 }
 
 void btn_2_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("2\n");
+  CalculatorView *view = data;
+  calculator_presenter_add_digit(view->presenter, '2');
 }
 
 void btn_3_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("3\n");
+  CalculatorView *view = data;
+  calculator_presenter_add_digit(view->presenter, '3');
 }
 
 void btn_4_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("4\n");
+  CalculatorView *view = data;
+  calculator_presenter_add_digit(view->presenter, '4');
 }
 
 void btn_5_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("5\n");
+  CalculatorView *view = data;
+  calculator_presenter_add_digit(view->presenter, '5');
 }
 
 void btn_6_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("6\n");
+  CalculatorView *view = data;
+  calculator_presenter_add_digit(view->presenter, '6');
 }
 
 void btn_7_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("7\n");
+  CalculatorView *view = data;
+  calculator_presenter_add_digit(view->presenter, '7');
 }
 
 void btn_8_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("8\n");
+  CalculatorView *view = data;
+  calculator_presenter_add_digit(view->presenter, '8');
 }
 
 void btn_9_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("9\n");
+  CalculatorView *view = data;
+  calculator_presenter_add_digit(view->presenter, '9');
 }
 
 void btn_point_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("point\n");
+  CalculatorView *view = data;
+  calculator_presenter_add_point(view->presenter);
 }
 
 void btn_result_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("result\n");
+  CalculatorView *view = data;
+  calculator_presenter_compute(view->presenter);
 }
 
 void btn_clear_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("clear\n");
+  CalculatorView *view = data;
+  calculator_presenter_clear(view->presenter);
 }
 
 void btn_back_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("back\n");
+  CalculatorView *view = data;
+  calculator_presenter_back(view->presenter);
 }
 
 void btn_division_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("division\n");
+  CalculatorView *view = data;
+  calculator_presenter_set_operator(view->presenter, Division);
 }
 
 void btn_multiplication_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("multiplication\n");
+  CalculatorView *view = data;
+  calculator_presenter_set_operator(view->presenter, Multiplication);
 }
 
 void btn_subtraction_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("subtraction\n");
+  CalculatorView *view = data;
+  calculator_presenter_set_operator(view->presenter, Subtraction);
 }
 
 void btn_addition_clicked_cb(GtkWidget *widget, gpointer data)
 {
-  g_print("addition\n");
+  CalculatorView *view = data;
+  calculator_presenter_set_operator(view->presenter, Addition);
 }
 
-CalculatorView* calculator_view_new()
+void win_calculator_destroy_cb(GtkWidget *widget, gpointer data)
+{
+  gtk_main_quit();
+
+  CalculatorView *view = data;
+  calculator_view_free(view);
+}
+
+CalculatorView *calculator_view_new()
 {
   CalculatorView *view = malloc(sizeof(CalculatorView));
+  CalculatorPresenter *presenter = calculator_presenter_new(view);
 
   GtkBuilder *builder;
   GObject *win_calculator;
@@ -110,9 +144,10 @@ CalculatorView* calculator_view_new()
 
   win_calculator = gtk_builder_get_object(builder, "win_calculator");
   txt_result = gtk_builder_get_object(builder, "txt_result");
-  gtk_builder_connect_signals(builder, NULL);
+  gtk_builder_connect_signals(builder, view);
   g_object_unref(G_OBJECT(builder));
 
+  view->presenter = presenter;
   view->win_calculator = GTK_WIDGET(win_calculator);
   view->txt_result = GTK_WIDGET(txt_result);
 
@@ -121,6 +156,7 @@ CalculatorView* calculator_view_new()
 
 void calculator_view_free(CalculatorView *view)
 {
+  calculator_presenter_free(view->presenter);
   free(view);
 }
 
@@ -131,5 +167,6 @@ void calculator_view_show(CalculatorView *view)
 
 void calculator_view_result_changed(CalculatorView *view, const char *result)
 {
-  g_print("result changed");
+  GtkEntry *entry = GTK_ENTRY(view->txt_result);
+  gtk_entry_set_text(entry, result);
 }

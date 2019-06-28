@@ -1,11 +1,6 @@
 #ifndef CALCULATOR_VIEW_H
 #define CALCULATOR_VIEW_H
-#include <gtk/gtk.h>
-
-typedef struct CalculatorView {
-  GtkWidget *win_calculator;
-  GtkWidget *txt_result;
-} CalculatorView;
+#include "calculator.h"
 
 CalculatorView* calculator_view_new();
 void calculator_view_free(CalculatorView *view);

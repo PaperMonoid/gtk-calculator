@@ -1,6 +1,8 @@
 # GTK Calculator
 A simple gtk calculator made in C.
 
+![GTK Calculator screenshot](media/screenshot.png)
+
 ## Requirements
 * gtk 3
 * gcc (tested on 8.3.1)
