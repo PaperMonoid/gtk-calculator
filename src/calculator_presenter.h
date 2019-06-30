@@ -2,7 +2,7 @@
 #define CALCULATOR_PRESENTER_H
 #include "calculator.h"
 
-CalculatorPresenter* calculator_presenter_new(CalculatorView *view);
+CalculatorPresenter *calculator_presenter_new(CalculatorView *view);
 void calculator_presenter_free(CalculatorPresenter *presenter);
 void calculator_presenter_add_digit(CalculatorPresenter *presenter,
 				    char digit);
