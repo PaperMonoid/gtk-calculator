@@ -20,7 +20,8 @@ void calculator_presenter_free(CalculatorPresenter *presenter)
 void calculator_presenter_add_digit(CalculatorPresenter *presenter,
 				    char digit)
 {
-  calculator_view_result_changed(presenter->view, &digit);
+  char digits[] = { digit, '\0'};
+  calculator_view_result_changed(presenter->view, digits);
 }
 
 void calculator_presenter_add_point(CalculatorPresenter *presenter)
