@@ -5,7 +5,8 @@
 struct CalculatorView;
 typedef struct CalculatorView CalculatorView;
 
-enum CalculatorOperator { Addition, Subtraction, Multiplication, Division };
+enum CalculatorOperator { None, Addition, Subtraction, Multiplication,
+			  Division };
 typedef enum CalculatorOperator CalculatorOperator;
 
 struct CalculatorPresenter;
