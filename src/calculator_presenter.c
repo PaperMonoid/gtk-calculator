@@ -7,15 +7,17 @@ struct CalculatorPresenter {
   CalculatorOperand *first;
   CalculatorOperand *second;
   CalculatorOperator operator;
+  int result;
 };
 
 CalculatorPresenter *calculator_presenter_new(CalculatorView *view)
 {
   CalculatorPresenter *presenter = malloc(sizeof(CalculatorPresenter));
+  presenter->view = view;
   presenter->first = calculator_operand_new(0.0);
   presenter->second = calculator_operand_new(0.0);
   presenter->operator = None;
-  presenter->view = view;
+  presenter->result = 0;
   return presenter;
 }
 
@@ -29,6 +31,10 @@ void calculator_presenter_free(CalculatorPresenter *presenter)
 void calculator_presenter_add_digit(CalculatorPresenter *presenter,
 				    char digit)
 {
+  if (presenter->result) {
+    calculator_presenter_clear(presenter);
+  }
+
   calculator_operand_add_digit(presenter->second, digit);
 
   char *result = calculator_operand_str(presenter->second);
@@ -37,6 +43,10 @@ void calculator_presenter_add_digit(CalculatorPresenter *presenter,
 
 void calculator_presenter_add_point(CalculatorPresenter *presenter)
 {
+  if (presenter->result) {
+    calculator_presenter_clear(presenter);
+  }
+
   calculator_operand_add_point(presenter->second);
 
   char *result = calculator_operand_str(presenter->second);
@@ -46,16 +56,26 @@ void calculator_presenter_add_point(CalculatorPresenter *presenter)
 void calculator_presenter_set_operator(CalculatorPresenter *presenter,
 				       CalculatorOperator operator)
 {
-  if (presenter->operator == None) {
+  if (presenter->result) {
+    calculator_operand_free(presenter->second);
+    presenter->second = calculator_operand_new(0.0);
+    presenter->operator = operator;
+    presenter->result = 0;
+  } else if (presenter->operator != None) {
+    calculator_presenter_compute(presenter);
+    calculator_operand_free(presenter->second);
+    presenter->second = calculator_operand_new(0.0);
+    presenter->operator = operator;
+    presenter->result = 0;
+  } else {
     calculator_operand_free(presenter->first);
     presenter->first = presenter->second;
     presenter->second = calculator_operand_new(0.0);
     presenter->operator = operator;
+    presenter->result = 0;
 
     char *result = calculator_operand_str(presenter->second);
     calculator_view_result_changed(presenter->view, result);
-  } else {
-    presenter->operator = operator;
   }
 }
 
@@ -66,6 +86,7 @@ void calculator_presenter_clear(CalculatorPresenter *presenter)
   presenter->first = calculator_operand_new(0.0);
   presenter->second = calculator_operand_new(0.0);
   presenter->operator = None;
+  presenter->result = 0;
 
   char *result = calculator_operand_str(presenter->second);
   calculator_view_result_changed(presenter->view, result);
@@ -97,11 +118,14 @@ void calculator_presenter_compute(CalculatorPresenter *presenter)
   case Division:
     first /= second;
     break;
+  default:
+    first = second;
+    break;
   }
-  calculator_operand_free(presenter->second);
-  presenter->second = calculator_operand_new(first);
-  presenter->operator = None;
+  calculator_operand_free(presenter->first);
+  presenter->first = calculator_operand_new(first);
+  presenter->result = 1;
 
-  char *result = calculator_operand_str(presenter->second);
+  char *result = calculator_operand_str(presenter->first);
   calculator_view_result_changed(presenter->view, result);
 }
