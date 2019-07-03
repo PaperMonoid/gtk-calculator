@@ -151,6 +151,8 @@ CalculatorView *calculator_view_new()
   view->win_calculator = GTK_WIDGET(win_calculator);
   view->txt_result = GTK_WIDGET(txt_result);
 
+  calculator_view_result_changed(view, "0");
+
   return view;
 }
 
