@@ -20,7 +20,7 @@ CalculatorOperand *calculator_operand_new(double number)
     operand->hasSign = 0;
     operand->length = 1;
   } else {
-    sprintf(operand->number, "%f", number);
+    sprintf(operand->number, "%.16g", number);
     operand->hasSign = number < 0;
     operand->hasPoint = round(number) == number;
     operand->length = strlen(operand->number);
@@ -60,6 +60,7 @@ void calculator_operand_add_point(CalculatorOperand *operand)
   if (operand->length < 30) {
     operand->number[operand->length] = '.';
     operand->number[++operand->length] = '\0';
+    operand->hasPoint = 1;
   }
 }
 
